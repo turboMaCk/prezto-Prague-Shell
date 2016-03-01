@@ -1,9 +1,9 @@
 # prezto: Prague Shell
-Theme for prezto
+Theme for prezto and zsh and colors for iTerm2.app
 
 Screenshot
 ==========
-![screen shot](http://i.imgur.com/pFzopBk.png)
+![screen shot](assets/screenshot.png)
 
 installation
 ============

@@ -1,9 +1,8 @@
-#
-# Extended and customized version of Sorin's theme for prezto
+# Extended and customized version of prague_shell's theme for prezto
 #
 # Authors:
 #   Marek Fajkus <marek.faj@gmail.com>
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
+#   prague_shell Ionescu <prague_shell.ionescu@gmail.com>
 #
 # Screenshots:
 #   http://i.imgur.com/hBs7hMD.png
@@ -12,7 +11,7 @@
 # Load dependencies.
 pmodload 'helper'
 
-function prompt_sorin_precmd {
+function prompt_prague_shell_precmd {
   setopt LOCAL_OPTIONS
   unsetopt XTRACE KSH_ARRAYS
 
@@ -37,7 +36,7 @@ function prompt_sorin_precmd {
   fi
 }
 
-function prompt_sorin_setup {
+function prompt_prague_shell_setup {
   setopt LOCAL_OPTIONS
   unsetopt XTRACE KSH_ARRAYS
   prompt_opts=(cr percent subst)
@@ -46,7 +45,7 @@ function prompt_sorin_setup {
   autoload -Uz add-zsh-hook
 
   # Add hook for calling git-info before each command.
-  add-zsh-hook precmd prompt_sorin_precmd
+  add-zsh-hook precmd prompt_prague_shell_precmd
 
   # Set editor-info parameters.
   zstyle ':prezto:module:editor:info:completing' format '%B%F{red}...%f%b'
@@ -90,4 +89,4 @@ function prompt_sorin_setup {
   SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 }
 
-prompt_sorin_setup "$@"
+prompt_prague_shell_setup "$@"

@@ -1,25 +1,23 @@
 #
-# Extended and customized version of Sorin's theme for prezto
+# Extended and customized version of prague's theme for prezto
 #
 # Authors:
 #   Marek Fajkus <marek.faj@gmail.com>
-#   Sorin Ionescu <sorin.ionescu@gmail.com>
-#
-# Screenshots:
-#   http://i.imgur.com/hBs7hMD.png
 #
 
-# Load dependencies.
-pmodload 'helper'
-
-function prompt_sorin_precmd {
+function prompt_prague_precmd {
   setopt LOCAL_OPTIONS
   unsetopt XTRACE KSH_ARRAYS
 
-  # Get Git repository information.
-  if (( $+functions[git-info] )); then
-    git-info
+  if [[ -n $(git ls-files --other --exclude-standard 2> /dev/null) ]]; then
+    branch_format="(%F{green}%b%f%u%c%F{cyan}●%f)"
+  else
+    branch_format="(%F{green}%b%f%u%c)"
   fi
+
+  zstyle ':vcs_info:*:prompt:*' formats "${branch_format}"
+
+  vcs_info 'prompt'
 
   # Get Ruby info
   if (( $+functions[ruby-info] )); then
@@ -37,41 +35,38 @@ function prompt_sorin_precmd {
   fi
 }
 
-function prompt_sorin_setup {
+function prompt_prague_setup {
   setopt LOCAL_OPTIONS
   unsetopt XTRACE KSH_ARRAYS
   prompt_opts=(cr percent subst)
 
   # Load required functions.
   autoload -Uz add-zsh-hook
+  autoload -Uz vcs_info
 
   # Add hook for calling git-info before each command.
-  add-zsh-hook precmd prompt_sorin_precmd
+  add-zsh-hook precmd prompt_prague_precmd
 
-  # Set editor-info parameters.
-  zstyle ':prezto:module:editor:info:completing' format '%B%F{red}...%f%b'
-  zstyle ':prezto:module:editor:info:keymap:primary' format '%B%F{red}❯%F{yellow}❯%F{green}❯%f%b'
-  zstyle ':prezto:module:editor:info:keymap:primary:overwrite' format ' %F{red}♺%f'
-  zstyle ':prezto:module:editor:info:keymap:alternate' format ' %B%F{green}❮%F{yellow}❮%F{red}❮%f%b'
+  # Formats:
+  #   %b - branchname
+  #   %u - unstagedstr (see below)
+  #   %c - stagedstr (see below)
+  #   %a - action (e.g. rebase-i)
+  #   %R - repository path
+  #   %S - path in the repository
+  local branch_format="(%F{yellow}%b%f%u%c)"
+  local action_format="(%F{green}%a%f)"
+  local unstaged_format="%F{red}●%f"
+  local staged_format="%F{green}●%f"
 
-  # Set git-info parameters.
-  zstyle ':prezto:module:git:info' verbose 'yes'
-  zstyle ':prezto:module:git:info:action' format ':%%B%F{yellow}%s%f%%b'
-  zstyle ':prezto:module:git:info:added' format ' %%B%F{green}+%f%%b'
-  zstyle ':prezto:module:git:info:ahead' format ' %%B%F{yellow}↑%f%%b'
-  zstyle ':prezto:module:git:info:behind' format ' %%B%F{yellow}↓%f%%b'
-  zstyle ':prezto:module:git:info:branch' format ':%F{green}%b%f'
-  zstyle ':prezto:module:git:info:commit' format ':%F{green}%.7c%f'
-  zstyle ':prezto:module:git:info:deleted' format ' %%B%F{red}✕%f%%b'
-  zstyle ':prezto:module:git:info:modified' format ' %%B%F{cyan}⦸%f%%b'
-  zstyle ':prezto:module:git:info:position' format ':%F{red}%p%f'
-  zstyle ':prezto:module:git:info:renamed' format ' %%B%F{magenta}➜%f%%b'
-  zstyle ':prezto:module:git:info:stashed' format ' %%B%F{cyan}✭%f%%b'
-  zstyle ':prezto:module:git:info:unmerged' format ' %%B%F{yellow}═%f%%b'
-  zstyle ':prezto:module:git:info:untracked' format ' %%B%F{white}●%f%%b'
-  zstyle ':prezto:module:git:info:keys' format \
-    'prompt' '(%F{blue}git%f$(coalesce "%b" "%p" "%c")%s)' \
-    'rprompt' '%A%B%S%a%d%m%r%U%u'
+  # Set vcs_info parameters.
+  zstyle ':vcs_info:*' enable bzr git hg svn
+  zstyle ':vcs_info:*:prompt:*' check-for-changes true
+  zstyle ':vcs_info:*:prompt:*' unstagedstr "${unstaged_format}"
+  zstyle ':vcs_info:*:prompt:*' stagedstr "${staged_format}"
+  zstyle ':vcs_info:*:prompt:*' actionformats "${branch_format}${action_format}"
+  zstyle ':vcs_info:*:prompt:*' formats "${branch_format}"
+  zstyle ':vcs_info:*:prompt:*' nvcsformats   ""
 
   # Set ruby-info parameters.
   zstyle ':prezto:module:ruby:info:version' format '%F{red}rb:%v%f'
@@ -83,11 +78,10 @@ function prompt_sorin_setup {
   zstyle ':prezto:module:node:info:version' format '%F{green}node:%v%f'
 
   # Define prompts.
-  PROMPT='
-%F{green}%n@%m%f %F{208}λ%f %F{cyan}%~%f ${ruby_info[version]} ${node_info[version]} ${python_info[virtualenv]}
-%(!. %B%F{red}#%f%b.)${editor_info[keymap]} '
-  RPROMPT='${editor_info[overwrite]}%(?:: %F{red}⏎%f)${VIM:+" %B%F{green}V%f%b"}${git_info[rprompt]} ${git_info:+${(e)git_info[prompt]}}'
-  SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
+  PROMPT="
+%F{green}%n%f%F{yellow}@%m%f %F{208}λ%f %F{cyan}%~%f "'${vcs_info_msg_0_}'" "'${node_info[version]}'" "'${ruby_info[version]}'" "'$python_info[virtualenv]'"
+%B%F{red}❯%F{yellow}❯%F{green}❯%f%b "
+  RPROMPT=''
 }
 
-prompt_sorin_setup "$@"
+prompt_prague_setup "$@"

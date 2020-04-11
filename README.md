@@ -18,7 +18,7 @@ $ git submodule add git@github.com:turboMaCk/prezto-Prague-Shell.git
 Create symlink in zprezto theme directory using install script
 
 ```shell
-$ sh bin/install.sh
+$ ./bin/install.sh
 ```
 
 set Prague Shell as your theme in .zprestorc

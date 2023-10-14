@@ -55,7 +55,7 @@ function prompt_prague_setup {
 
   # Define prompts.
   PROMPT="
-%F{green}%n%f%F{yellow}@%m%f %F{208}λ%f %F{cyan}%~%f "'${vcs_info_msg_0_}'"
+%F{green}%n%f%F{yellow}@%m%f %F{132}λ%f %F{cyan}%~%f "'${vcs_info_msg_0_}'"
 %B%F{red}❯%F{yellow}❯%F{green}❯%f%b "
   RPROMPT=''
 }
